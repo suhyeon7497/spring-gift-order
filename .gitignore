@@ -41,4 +41,4 @@ out/
 
 #ignore properties file
 application.properties
-application-kakao.properties
+application-API-KEY.properties
