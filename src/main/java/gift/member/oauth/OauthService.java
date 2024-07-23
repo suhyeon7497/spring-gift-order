@@ -17,9 +17,16 @@ public class OauthService {
         this.restClient = restClient;
     }
 
+    public URI getAuthorization() {
+        ResponseEntity<String> response = restClient.get()
+            .uri(URI.create(kakaoProperties.getAuthorizationUrl()))
+            .retrieve()
+            .toEntity(String.class);
+        return response.getHeaders().getLocation();
+    }
+
     public void getKakaoToken(String authorizationCode) {
         LinkedMultiValueMap<String, String> body = createBody(authorizationCode);
-
         ResponseEntity<KakaoTokenResponse> response = restClient.post()
             .uri(URI.create(kakaoProperties.tokenUrl()))
             .body(body)
