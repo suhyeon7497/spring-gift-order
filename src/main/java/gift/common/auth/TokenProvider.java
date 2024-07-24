@@ -6,19 +6,21 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenProvider {
 
-    private static final String SECRET_KEY = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+    @Value("${secret-key}")
+    private String secretKey;
 
     public String generateToken(Member member) {
         return Jwts.builder()
             .claim("name", member.getName())
             .claim("role", member.getRole())
             .subject(member.getId().toString())
-            .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+            .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
             .compact();
     }
 
@@ -35,7 +37,7 @@ public class TokenProvider {
     }
 
     public Claims getClaims(String token) throws JwtException {
-        Jws<Claims> jws = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+        Jws<Claims> jws = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
             .build()
             .parseSignedClaims(token);
         return jws.getPayload();
