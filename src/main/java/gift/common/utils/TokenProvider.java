@@ -1,4 +1,4 @@
-package gift.common.auth;
+package gift.common.utils;
 
 import gift.member.model.Member;
 import io.jsonwebtoken.Claims;

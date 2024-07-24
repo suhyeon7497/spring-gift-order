@@ -1,6 +1,7 @@
 package gift.common.auth;
 
 import gift.common.exception.MemberException;
+import gift.common.utils.TokenProvider;
 import gift.member.MemberErrorCode;
 import gift.member.MemberRepository;
 import gift.member.model.Member;
