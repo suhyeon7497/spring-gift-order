@@ -1,45 +1,64 @@
 package gift.member.oauth;
 
+import gift.api.KakaoAuthClient;
+import gift.api.KakaoMemberResponse;
+import gift.api.KakaoTokenResponse;
+import gift.common.utils.TokenProvider;
+import gift.member.MemberRepository;
+import gift.member.model.Member;
+import gift.member.oauth.model.OauthToken;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
 
 @Service
 public class OauthService {
-    private final KakaoProperties kakaoProperties;
 
-    private final RestClient restClient;
+    private final KakaoAuthClient kakaoAuthClient;
 
-    public OauthService(KakaoProperties kakaoProperties, RestClient restClient) {
-        this.kakaoProperties = kakaoProperties;
-        this.restClient = restClient;
+    private final TokenProvider tokenProvider;
+
+    private final MemberRepository memberRepository;
+
+    private final OauthTokenRepository oauthTokenRepository;
+
+    public OauthService(KakaoAuthClient kakaoAuthClient, TokenProvider tokenProvider, MemberRepository memberRepository,
+        OauthTokenRepository oauthTokenRepository) {
+        this.kakaoAuthClient = kakaoAuthClient;
+        this.tokenProvider = tokenProvider;
+        this.memberRepository = memberRepository;
+        this.oauthTokenRepository = oauthTokenRepository;
     }
 
-    public URI getAuthorization() {
-        ResponseEntity<String> response = restClient.get()
-            .uri(URI.create(kakaoProperties.getAuthorizationUrl()))
-            .retrieve()
-            .toEntity(String.class);
-        return response.getHeaders().getLocation();
+    public URI getKakaoAuthorization() {
+        return kakaoAuthClient.getAuthorization();
     }
 
-    public void getKakaoToken(String authorizationCode) {
-        LinkedMultiValueMap<String, String> body = createBody(authorizationCode);
-        ResponseEntity<KakaoTokenResponse> response = restClient.post()
-            .uri(URI.create(kakaoProperties.tokenUrl()))
-            .body(body)
-            .retrieve()
-            .toEntity(KakaoTokenResponse.class);
+    public String loginByKakao(String authorizationCode) {
+        KakaoTokenResponse kakaoTokenReponse = kakaoAuthClient.getKakaoTokenResponse(authorizationCode);
+        String email = kakaoAuthClient.getEmail(kakaoTokenReponse.accessToken());
+        Member member = saveToken(email, kakaoTokenReponse);
+        return tokenProvider.generateToken(member);
     }
 
-    private LinkedMultiValueMap<String, String> createBody(String authorizationCode) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", kakaoProperties.grantType());
-        body.add("client_id", kakaoProperties.clientId());
-        body.add("redirect_uri", kakaoProperties.redirectUri());
-        body.add("code", authorizationCode);
-        return body;
+    @Transactional
+    private Member saveToken(String email, KakaoTokenResponse kakaoTokenReponse) {
+        if (oauthTokenRepository.existsByProviderAndEmail("kakao", email)) {
+            OauthToken oauthToken = oauthTokenRepository.findByProviderAndEmail("kakao",
+                email);
+            oauthToken.updateToken(kakaoTokenReponse.accessToken(),
+                kakaoTokenReponse.refreshToken());
+            return oauthToken.getMember();
+        }
+
+        Member member = new Member(email, "", "nickname", "Member");
+        memberRepository.save(member);
+        OauthToken oauthToken = new OauthToken("kakao", email,
+            kakaoTokenReponse.accessToken(), kakaoTokenReponse.refreshToken(), member);
+        oauthTokenRepository.save(oauthToken);
+        return member;
     }
+
 }

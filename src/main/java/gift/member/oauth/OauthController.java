@@ -1,7 +1,6 @@
 package gift.member.oauth;
 
 
-import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,13 +21,12 @@ public class OauthController {
     @GetMapping
     public ResponseEntity<Void> getAuthorization() {
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
-            .location(oauthService.getAuthorization()).build();
+            .location(oauthService.getKakaoAuthorization()).build();
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<Void> getKakaoToken(@RequestParam("code") String authorizationCode) {
-        oauthService.getKakaoToken(authorizationCode);
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-            .location(URI.create("http://localhost:8080")).build();
+    public ResponseEntity<String> getKakaoToken(@RequestParam("code") String authorizationCode) {
+        String accessToken = oauthService.loginByKakao(authorizationCode);
+        return ResponseEntity.ok(accessToken);
     }
 }

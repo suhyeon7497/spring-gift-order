@@ -1,4 +1,4 @@
-package gift.member.oauth;
+package gift.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,10 +1,10 @@
-package gift.member.oauth;
+package gift.api;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "kakao")
 public record KakaoProperties(String grantType, String clientId, String authorization,
-                              String redirectUri, String tokenUrl) {
+                              String redirectUri, String tokenUrl, String memberUrl) {
 
     public String getAuthorizationUrl() {
         return authorization
