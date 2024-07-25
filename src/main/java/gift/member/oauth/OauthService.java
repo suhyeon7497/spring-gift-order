@@ -36,6 +36,7 @@ public class OauthService {
         return kakaoAuthClient.getAuthorization();
     }
 
+    @Transactional
     public String loginByKakao(String authorizationCode) {
         KakaoTokenResponse kakaoTokenReponse = kakaoAuthClient.getKakaoTokenResponse(authorizationCode);
         String email = kakaoAuthClient.getEmail(kakaoTokenReponse.accessToken());
@@ -43,7 +44,6 @@ public class OauthService {
         return tokenProvider.generateToken(member);
     }
 
-    @Transactional
     private Member saveToken(String email, KakaoTokenResponse kakaoTokenReponse) {
         if (oauthTokenRepository.existsByProviderAndEmail("kakao", email)) {
             OauthToken oauthToken = oauthTokenRepository.findByProviderAndEmail("kakao",
@@ -54,7 +54,7 @@ public class OauthService {
         }
 
         Member member = new Member(email, "", "nickname", "Member");
-        memberRepository.save(member);
+        member = memberRepository.save(member);
         OauthToken oauthToken = new OauthToken("kakao", email,
             kakaoTokenReponse.accessToken(), kakaoTokenReponse.refreshToken(), member);
         oauthTokenRepository.save(oauthToken);
