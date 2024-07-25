@@ -10,11 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 public class Option {
@@ -40,6 +38,7 @@ public class Option {
         this.name = name;
         this.quantity = quantity;
         this.product = product;
+        product.addOption(this);
     }
 
     public Long getId() {
@@ -58,9 +57,10 @@ public class Option {
         return product;
     }
 
-    public void updateInfo(String name, Integer quantity) {
+    public void updateInfo(String name, Integer quantity) throws OptionException {
         this.name = name;
         this.quantity = quantity;
+        Option.Validator.validateDuplicated(product.getOptions());
     }
 
     public void subtract(Integer quantity) throws OptionException {
@@ -72,7 +72,8 @@ public class Option {
 
     public static class Validator {
 
-        public static void validateName(List<Option> optionList, Option newOption) throws OptionException {
+        public static void validateName(List<Option> optionList, Option newOption)
+            throws OptionException {
             optionList.add(newOption);
             validateDuplicated(optionList);
         }
@@ -85,8 +86,8 @@ public class Option {
 
         public static void validateDuplicated(List<Option> optionList) throws OptionException {
             List<String> optionNameList = getOptionNames(optionList);
-            Set<String> optionSet = new HashSet<>(optionNameList);
-            if(optionList.size() != optionSet.size()) {
+            Set<String> optionNameSet = new HashSet<>(optionNameList);
+            if (optionNameList.size() != optionNameSet.size()) {
                 throw new OptionException(OptionErrorCode.NAME_DUPLICATED);
             }
         }

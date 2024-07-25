@@ -2,9 +2,11 @@ package gift.api;
 
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
+@Component
 public class KakaoAuthClient {
 
     private final KakaoProperties kakaoProperties;
