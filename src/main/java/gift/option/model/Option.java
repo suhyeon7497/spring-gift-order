@@ -10,9 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Option {
@@ -60,7 +58,7 @@ public class Option {
     public void updateInfo(String name, Integer quantity) throws OptionException {
         this.name = name;
         this.quantity = quantity;
-        Option.Validator.validateDuplicated(product.getOptions());
+        product.validateOptions();
     }
 
     public void subtract(Integer quantity) throws OptionException {
@@ -72,28 +70,10 @@ public class Option {
 
     public static class Validator {
 
-        public static void validateName(List<Option> optionList, Option newOption)
-            throws OptionException {
-            optionList.add(newOption);
-            validateDuplicated(optionList);
-        }
-
         public static void validateOptionCount(List<Option> options) throws OptionException {
             if (options.size() <= 1) {
                 throw new OptionException(OptionErrorCode.OPTION_COUNT_ONE);
             }
-        }
-
-        public static void validateDuplicated(List<Option> optionList) throws OptionException {
-            List<String> optionNameList = getOptionNames(optionList);
-            Set<String> optionNameSet = new HashSet<>(optionNameList);
-            if (optionNameList.size() != optionNameSet.size()) {
-                throw new OptionException(OptionErrorCode.NAME_DUPLICATED);
-            }
-        }
-
-        private static List<String> getOptionNames(List<Option> optionList) {
-            return optionList.stream().map(Option::getName).toList();
         }
     }
 }
