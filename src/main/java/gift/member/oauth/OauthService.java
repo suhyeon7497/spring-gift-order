@@ -1,17 +1,14 @@
 package gift.member.oauth;
 
 import gift.api.KakaoAuthClient;
-import gift.api.KakaoMemberResponse;
 import gift.api.KakaoTokenResponse;
 import gift.common.utils.TokenProvider;
 import gift.member.MemberRepository;
 import gift.member.model.Member;
 import gift.member.oauth.model.OauthToken;
 import java.net.URI;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 
 @Service
 public class OauthService {
@@ -24,7 +21,8 @@ public class OauthService {
 
     private final OauthTokenRepository oauthTokenRepository;
 
-    public OauthService(KakaoAuthClient kakaoAuthClient, TokenProvider tokenProvider, MemberRepository memberRepository,
+    public OauthService(KakaoAuthClient kakaoAuthClient, TokenProvider tokenProvider,
+        MemberRepository memberRepository,
         OauthTokenRepository oauthTokenRepository) {
         this.kakaoAuthClient = kakaoAuthClient;
         this.tokenProvider = tokenProvider;
@@ -38,7 +36,8 @@ public class OauthService {
 
     @Transactional
     public String loginByKakao(String authorizationCode) {
-        KakaoTokenResponse kakaoTokenReponse = kakaoAuthClient.getKakaoTokenResponse(authorizationCode);
+        KakaoTokenResponse kakaoTokenReponse = kakaoAuthClient.getKakaoTokenResponse(
+            authorizationCode);
         String email = kakaoAuthClient.getEmail(kakaoTokenReponse.accessToken());
         Member member = saveToken(email, kakaoTokenReponse);
         return tokenProvider.generateToken(member);

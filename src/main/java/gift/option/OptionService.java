@@ -60,7 +60,8 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractOption(Long optionId, OptionRequest.Subtract optionSubtract) throws OptionException {
+    public void subtractOption(Long optionId, OptionRequest.Subtract optionSubtract)
+        throws OptionException {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new OptionException(OptionErrorCode.NOT_FOUND));
         option.subtract(optionSubtract.quantity());

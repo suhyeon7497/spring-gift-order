@@ -67,10 +67,6 @@ public class Product extends BaseEntity {
         return category;
     }
 
-    public List<Option> getOptions() {
-        return options;
-    }
-
     public void updateInfo(String name, Integer price, String imageUrl, Category category) {
         Product.Validator.validateKakaoWord(name);
         this.name = name;
