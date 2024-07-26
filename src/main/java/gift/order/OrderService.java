@@ -45,7 +45,7 @@ public class OrderService {
         }
 
         option.subtract(orderRequest.quantity());
-        order = orderRepository.save(order);
+        orderRepository.save(order);
 
         OauthToken oauthToken = oauthTokenRepository.findByMemberId(loginMemberDto.getId())
             .orElseThrow();

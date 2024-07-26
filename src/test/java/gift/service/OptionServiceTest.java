@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
@@ -99,6 +98,7 @@ class OptionServiceTest {
             () -> optionService.subtractOption(1L, new OptionRequest.Subtract(3))
         );
     }
+
     @Test
     void subtractOption() {
         Category category = new Category("category", "##cate", "category.jpg", "category");
