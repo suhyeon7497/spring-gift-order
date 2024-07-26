@@ -40,13 +40,13 @@ public class Order extends BaseEntity {
 
     public String createOrderText() {
         return String.format("""
-            -주문 내역-
-            주문 카테고리 : %s
-            주문 상품 : %s
-            주문 수량 : %d
-                        
-            메세지 : %s
-            """,
+                -주문 내역-
+                주문 카테고리 : %s
+                주문 상품 : %s
+                주문 수량 : %d
+                            
+                메세지 : %s
+                """,
             option.getProduct().getCategory(),
             option.getProduct().getName(),
             quantity,

@@ -38,14 +38,17 @@ public class OrderService {
         Order order = new Order(loginMemberDto.toEntity(), option, orderRequest.quantity(),
             orderRequest.message());
 
-        if(wishRepository.existsByMemberIdAndProductId(loginMemberDto.getId(), option.getProduct().getId())) {
-            wishRepository.deleteByMemberIdAndProductId(loginMemberDto.getId(), option.getProduct().getId());
+        if (wishRepository.existsByMemberIdAndProductId(loginMemberDto.getId(),
+            option.getProduct().getId())) {
+            wishRepository.deleteByMemberIdAndProductId(loginMemberDto.getId(),
+                option.getProduct().getId());
         }
 
         option.subtract(orderRequest.quantity());
         order = orderRepository.save(order);
 
-        OauthToken oauthToken = oauthTokenRepository.findByMemberId(loginMemberDto.getId()).orElseThrow();
+        OauthToken oauthToken = oauthTokenRepository.findByMemberId(loginMemberDto.getId())
+            .orElseThrow();
         kakaoMessageClient.sendOrderMessage(order, oauthToken.getAccessToken());
         return OrderResponse.from(order);
     }
