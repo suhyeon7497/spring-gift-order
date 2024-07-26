@@ -39,6 +39,7 @@ public class Order extends BaseEntity {
     }
 
     public String gerOrderMessage() {
-        return "주문 성공하셨습니다.";
+        return "주문 성공하셨습니다.\n"
+            + message;
     }
 }
