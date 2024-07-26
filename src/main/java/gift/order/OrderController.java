@@ -11,9 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest,
         @LoginMember LoginMemberDto loginMemberDto) {
-        return ResponseEntity.created(URI.create("/api/orders/1")).body(null);
+        return ResponseEntity.created(URI.create("/api/orders/1"))
+            .body(orderService.createOrder(orderRequest, loginMemberDto));
     }
 }
