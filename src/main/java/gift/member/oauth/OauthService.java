@@ -1,7 +1,7 @@
 package gift.member.oauth;
 
-import gift.api.KakaoAuthClient;
-import gift.api.KakaoTokenResponse;
+import gift.api.kakaoAuth.KakaoAuthClient;
+import gift.api.kakaoAuth.KakaoTokenResponse;
 import gift.common.utils.TokenProvider;
 import gift.member.MemberRepository;
 import gift.member.model.Member;

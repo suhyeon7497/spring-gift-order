@@ -1,5 +1,6 @@
-package gift.api;
+package gift.api.kakaoAuth;
 
+import gift.api.KakaoProperties;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

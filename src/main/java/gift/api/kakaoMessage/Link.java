@@ -1,6 +1,4 @@
-package gift.api;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package gift.api.kakaoMessage;
 
 public record Link(String webUrl,
                    String mobileWebUrl) {
