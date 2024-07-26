@@ -38,8 +38,18 @@ public class Order extends BaseEntity {
         return option.getId();
     }
 
-    public String gerOrderMessage() {
-        return "주문 성공하셨습니다.\n"
-            + message;
+    public String createOrderText() {
+        return String.format("""
+            -주문 내역-
+            주문 카테고리 : %s
+            주문 상품 : %s
+            주문 수량 : %d
+                        
+            메세지 : %s
+            """,
+            option.getProduct().getCategory(),
+            option.getProduct().getName(),
+            quantity,
+            message);
     }
 }
