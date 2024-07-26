@@ -34,15 +34,6 @@ public class KakaoAuthClient {
             .body(KakaoTokenResponse.class);
     }
 
-    private LinkedMultiValueMap<String, String> createBody(String authorizationCode) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", kakaoProperties.grantType());
-        body.add("client_id", kakaoProperties.clientId());
-        body.add("redirect_uri", kakaoProperties.redirectUri());
-        body.add("code", authorizationCode);
-        return body;
-    }
-
     public String getEmail(String accessToken) {
         KakaoMemberResponse response = restClient.get()
             .uri(URI.create(kakaoProperties.memberUrl()))
@@ -50,5 +41,15 @@ public class KakaoAuthClient {
             .retrieve()
             .body(KakaoMemberResponse.class);
         return response.kakaoAccount().email();
+    }
+
+
+    private LinkedMultiValueMap<String, String> createBody(String authorizationCode) {
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", kakaoProperties.grantType());
+        body.add("client_id", kakaoProperties.clientId());
+        body.add("redirect_uri", kakaoProperties.redirectUri());
+        body.add("code", authorizationCode);
+        return body;
     }
 }

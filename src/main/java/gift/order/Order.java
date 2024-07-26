@@ -6,7 +6,6 @@ import gift.option.model.Option;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class Order extends BaseEntity {
@@ -37,5 +36,9 @@ public class Order extends BaseEntity {
 
     public Long getOptionId() {
         return option.getId();
+    }
+
+    public String gerOrderMessage() {
+        return "주문 성공하셨습니다.";
     }
 }
