@@ -51,7 +51,8 @@ public class ProductService {
             productCreate.imageUrl(), category);
         List<Option> options = productCreate.optionCreateRequests()
             .stream()
-            .map(optionCreateRequest -> new Option(optionCreateRequest.name(), optionCreateRequest.quantity(), product))
+            .map(optionCreateRequest -> new Option(optionCreateRequest.name(),
+                optionCreateRequest.quantity(), product))
             .toList();
         productRepository.save(product);
         options.forEach(optionRepository::save);

@@ -4,6 +4,7 @@ import gift.category.model.Category;
 import gift.common.exception.OptionException;
 import gift.common.exception.ProductException;
 import gift.common.model.BaseEntity;
+import gift.option.OptionErrorCode;
 import gift.option.model.Option;
 import gift.product.ProductErrorCode;
 import jakarta.persistence.Column;
@@ -12,7 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Product extends BaseEntity {
@@ -33,7 +36,7 @@ public class Product extends BaseEntity {
     }
 
     public Product(String name, int price, String imageUrl, Category category) {
-        validateKakaoWord(name);
+        Product.Validator.validateKakaoWord(name);
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
@@ -64,26 +67,41 @@ public class Product extends BaseEntity {
         return category;
     }
 
-    public List<Option> getOptions() {
-        return options;
-    }
-
     public void updateInfo(String name, Integer price, String imageUrl, Category category) {
-        validateKakaoWord(name);
+        Product.Validator.validateKakaoWord(name);
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
     }
 
-    private void validateKakaoWord(String name) throws ProductException {
-        if (name.contains("카카오")) {
-            throw new ProductException(ProductErrorCode.HAS_KAKAO_WORD);
-        }
-    }
-
     public void addOption(Option option) throws OptionException {
         this.options.add(option);
-        Option.Validator.validateDuplicated(options);
+        Product.Validator.validateDuplicated(options);
+    }
+
+    public void validateOptions() throws OptionException {
+        Product.Validator.validateDuplicated(options);
+    }
+
+    private static class Validator {
+
+        private static void validateKakaoWord(String name) throws ProductException {
+            if (name.contains("카카오")) {
+                throw new ProductException(ProductErrorCode.HAS_KAKAO_WORD);
+            }
+        }
+
+        private static void validateDuplicated(List<Option> optionList) throws OptionException {
+            List<String> optionNameList = getOptionNames(optionList);
+            Set<String> optionNameSet = new HashSet<>(optionNameList);
+            if (optionNameList.size() != optionNameSet.size()) {
+                throw new OptionException(OptionErrorCode.NAME_DUPLICATED);
+            }
+        }
+
+        private static List<String> getOptionNames(List<Option> optionList) {
+            return optionList.stream().map(Option::getName).toList();
+        }
     }
 }

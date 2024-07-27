@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @DataJpaTest
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 class OptionRepositoryTest {
 
     @Autowired

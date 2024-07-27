@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.category.model.CategoryRequest;
 import gift.member.model.MemberRequest;
+import gift.option.model.OptionRequest;
 import gift.option.model.OptionRequest.Create;
 import gift.option.model.OptionResponse;
 import gift.product.model.ProductRequest;
@@ -21,12 +22,13 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class OptionEndToEndTest {
 
     @LocalServerPort
@@ -55,6 +57,24 @@ public class OptionEndToEndTest {
             new ParameterizedTypeReference<List<OptionResponse>>() {
             });
         assertThat(actual.getBody()).isEqualTo(List.of(new OptionResponse(1L, "option", 1)));
+    }
+
+    @Test
+    void addOption() {
+        var url = "http://localhost:" + port + "/api/products/1/options";
+        var request = new OptionRequest.Create("option1", 2);
+        var requestEntity = new RequestEntity<>(request, headers, HttpMethod.POST, URI.create(url));
+        var actual = restTemplate.exchange(requestEntity, String.class);
+        System.out.println(actual);
+    }
+
+    @Test
+    void updateOption() {
+        var url = "http://localhost:" + port + "/api/options/1";
+        var request = new OptionRequest.Update("option1", 2);
+        var requestEntity = new RequestEntity<>(request, headers, HttpMethod.PUT, URI.create(url));
+        var actual = restTemplate.exchange(requestEntity, String.class);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     private HttpHeaders getToken() throws JsonProcessingException {

@@ -6,9 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import gift.common.exception.OptionException;
 import gift.option.model.Option;
 import gift.product.model.Product;
-import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OptionTest {
@@ -33,7 +31,8 @@ class OptionTest {
         String name = "changed";
         Integer quantity = 2;
 
-        assertThatExceptionOfType(OptionException.class).isThrownBy(()->option1.updateInfo(name, quantity));
+        assertThatExceptionOfType(OptionException.class).isThrownBy(
+            () -> option1.updateInfo(name, quantity));
     }
 
     @Test
