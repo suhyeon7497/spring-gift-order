@@ -11,4 +11,6 @@ public interface OauthTokenRepository extends JpaRepository<OauthToken, Long> {
     boolean existsByProviderAndEmail(String provider, String email);
 
     Optional<OauthToken> findByMemberId(Long memberId);
+
+    Optional<OauthToken> findByAccessToken(String accessToken);
 }

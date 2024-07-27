@@ -1,10 +1,10 @@
 package gift.api.kakaoMessage;
 
 import gift.api.KakaoProperties;
+import gift.api.aop.TokenRefresher;
 import gift.order.Order;
 import java.net.URI;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -21,14 +21,13 @@ public class KakaoMessageClient {
         this.restClient = restClient;
     }
 
-    public void sendOrderMessage(Order order, String accessToken) {
-        LinkedMultiValueMap<String, String> body = kakaoMessageMaker.createOrderMessage(order);
+    @TokenRefresher
+    public void sendOrderMessage(String accessToken, Order order) {
         restClient.post()
             .uri(URI.create(kakaoProperties.messageUrl()))
             .header("Authorization", "Bearer " + accessToken)
-            .body(body)
+            .body(kakaoMessageMaker.createOrderMessage(order))
             .retrieve();
     }
-
 
 }

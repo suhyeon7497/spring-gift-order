@@ -49,7 +49,7 @@ public class OrderService {
 
         OauthToken oauthToken = oauthTokenRepository.findByMemberId(loginMemberDto.getId())
             .orElseThrow();
-        kakaoMessageClient.sendOrderMessage(order, oauthToken.getAccessToken());
+        kakaoMessageClient.sendOrderMessage(oauthToken.getAccessToken(), order);
         return OrderResponse.from(order);
     }
 }

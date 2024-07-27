@@ -2,6 +2,8 @@ package gift.api.kakaoAuth;
 
 import gift.api.KakaoProperties;
 import java.net.URI;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,7 +29,7 @@ public class KakaoAuthClient {
     }
 
     public KakaoTokenResponse getKakaoTokenResponse(String authorizationCode) {
-        LinkedMultiValueMap<String, String> body = createBody(authorizationCode);
+        LinkedMultiValueMap<String, String> body = createGetTokenBody(authorizationCode);
         return restClient.post()
             .uri(URI.create(kakaoProperties.tokenUrl()))
             .body(body)
@@ -44,13 +46,38 @@ public class KakaoAuthClient {
         return response.kakaoAccount().email();
     }
 
+    public boolean isNotValidAccessToken(String accessToken) {
+        ResponseEntity<String> response = restClient.get()
+            .uri(URI.create(kakaoProperties.tokenValidateUrl()))
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .toEntity(String.class);
+        return response.getStatusCode() == HttpStatus.UNAUTHORIZED;
+    }
 
-    private LinkedMultiValueMap<String, String> createBody(String authorizationCode) {
+    public KakaoTokenResponse refreshAccessToken(String refreshToken) {
+        return restClient.post()
+            .uri(URI.create(kakaoProperties.tokenUrl()))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(createRefreshTokenBody(refreshToken))
+            .retrieve()
+            .body(KakaoTokenResponse.class);
+    }
+
+    private LinkedMultiValueMap<String, String> createGetTokenBody(String authorizationCode) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", kakaoProperties.grantType());
+        body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", authorizationCode);
+        return body;
+    }
+
+    private LinkedMultiValueMap<String, String> createRefreshTokenBody(String refreshToken) {
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", kakaoProperties.clientId());
+        body.add("refresh_token", refreshToken);
         return body;
     }
 }

@@ -49,7 +49,7 @@ public class Order extends BaseEntity {
                             
                 메세지 : %s
                 """,
-            option.getProduct().getCategory(),
+            option.getProduct().getCategory().getName(),
             option.getProduct().getName(),
             quantity,
             message);

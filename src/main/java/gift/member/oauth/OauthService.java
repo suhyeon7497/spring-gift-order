@@ -60,4 +60,15 @@ public class OauthService {
         return member;
     }
 
+    @Transactional
+    public void verifyToken(String accessToken) {
+        if (kakaoAuthClient.isNotValidAccessToken(accessToken)) {
+            OauthToken oauthToken = oauthTokenRepository.findByAccessToken(accessToken)
+                .orElseThrow();
+            KakaoTokenResponse kakaoTokenResponse = kakaoAuthClient.refreshAccessToken(
+                oauthToken.getRefreshToken());
+            oauthToken.updateToken(kakaoTokenResponse.accessToken(),
+                kakaoTokenResponse.refreshToken());
+        }
+    }
 }
