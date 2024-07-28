@@ -51,7 +51,7 @@ public class OauthToken {
     public Member getMember() {
         return member;
     }
-
+  
     public void updateToken(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         if (refreshToken != null) {
