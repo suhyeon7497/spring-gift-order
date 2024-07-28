@@ -53,7 +53,7 @@ public class OauthService {
         }
 
         Member member = new Member(email, "", "nickname", "Member");
-        member = memberRepository.save(member);
+        memberRepository.save(member);
         OauthToken oauthToken = new OauthToken("kakao", email,
             kakaoTokenReponse.accessToken(), kakaoTokenReponse.refreshToken(), member);
         oauthTokenRepository.save(oauthToken);
