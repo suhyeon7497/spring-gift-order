@@ -31,8 +31,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-            .title("API test")
-            .description("설명")
+            .title("상품 주문하기 API")
+            .description("상품을 등록하고, 상품을 주문할 수 있습니다.")
             .version("1.0.0");
     }
 }
