@@ -4,6 +4,8 @@ import gift.api.KakaoProperties;
 import gift.api.aop.TokenRefresher;
 import gift.order.Order;
 import java.net.URI;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -22,6 +24,7 @@ public class KakaoMessageClient {
     }
 
     @TokenRefresher
+    @Retryable(backoff = @Backoff(delay = 1000))
     public void sendOrderMessage(String accessToken, Order order) {
         restClient.post()
             .uri(URI.create(kakaoProperties.messageUrl()))
