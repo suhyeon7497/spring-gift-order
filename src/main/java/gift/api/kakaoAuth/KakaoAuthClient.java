@@ -5,6 +5,8 @@ import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -37,6 +39,7 @@ public class KakaoAuthClient {
             .body(KakaoTokenResponse.class);
     }
 
+    @Retryable(backoff = @Backoff(delay = 1000))
     public String getEmail(String accessToken) {
         KakaoMemberResponse response = restClient.get()
             .uri(URI.create(kakaoProperties.memberUrl()))
@@ -46,6 +49,7 @@ public class KakaoAuthClient {
         return response.kakaoAccount().email();
     }
 
+    @Retryable(backoff = @Backoff(delay = 1000))
     public boolean isNotValidAccessToken(String accessToken) {
         ResponseEntity<String> response = restClient.get()
             .uri(URI.create(kakaoProperties.tokenValidateUrl()))
@@ -55,6 +59,7 @@ public class KakaoAuthClient {
         return response.getStatusCode() == HttpStatus.UNAUTHORIZED;
     }
 
+    @Retryable(backoff = @Backoff(delay = 1000))
     public KakaoTokenResponse refreshAccessToken(String refreshToken) {
         return restClient.post()
             .uri(URI.create(kakaoProperties.tokenUrl()))
