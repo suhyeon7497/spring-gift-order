@@ -35,9 +35,6 @@ public class OrderService {
     public OrderResponse createOrder(OrderRequest orderRequest, LoginMemberDto loginMemberDto) {
         Option option = optionRepository.findById(orderRequest.optionId())
             .orElseThrow(() -> new OptionException(OptionErrorCode.NOT_FOUND));
-        Order order = new Order(loginMemberDto.toEntity(), option, orderRequest.quantity(),
-            orderRequest.message());
-
         if (wishRepository.existsByMemberIdAndProductId(loginMemberDto.getId(),
             option.getProduct().getId())) {
             wishRepository.deleteByMemberIdAndProductId(loginMemberDto.getId(),
@@ -45,6 +42,8 @@ public class OrderService {
         }
 
         option.subtract(orderRequest.quantity());
+        Order order = new Order(loginMemberDto.toEntity(), option, orderRequest.quantity(),
+            orderRequest.message());
         orderRepository.save(order);
 
         OauthToken oauthToken = oauthTokenRepository.findByMemberId(loginMemberDto.getId())
