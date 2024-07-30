@@ -1,6 +1,8 @@
 package gift.api.kakaoMessage;
 
-public record TextTemplate(String objectType,
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record TextTemplate(@JsonProperty("object_type") String objectType,
                            String text,
                            Link link) {
 

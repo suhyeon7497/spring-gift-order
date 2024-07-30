@@ -1,6 +1,8 @@
 package gift.api.kakaoMessage;
 
-public record Link(String webUrl,
-                   String mobileWebUrl) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record Link(@JsonProperty("web_url") String webUrl,
+                   @JsonProperty("mobile_web_url") String mobileWebUrl) {
 
 }
