@@ -21,6 +21,10 @@ public class Order extends BaseEntity {
     private Integer quantity;
     private String message;
 
+    protected Order() {
+
+    }
+
     public Order(Member member, Option option, Integer quantity, String message) {
         this.member = member;
         this.option = option;
