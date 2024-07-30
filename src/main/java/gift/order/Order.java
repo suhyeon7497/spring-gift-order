@@ -14,12 +14,12 @@ public class Order extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    Member member;
+    private Member member;
     @ManyToOne
     @JoinColumn(name = "option_id")
-    Option option;
-    Integer quantity;
-    String message;
+    private Option option;
+    private Integer quantity;
+    private String message;
 
     public Order(Member member, Option option, Integer quantity, String message) {
         this.member = member;
