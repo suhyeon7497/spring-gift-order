@@ -50,16 +50,6 @@ public class KakaoAuthClient {
     }
 
     @Retryable(backoff = @Backoff(delay = 1000))
-    public boolean isNotValidAccessToken(String accessToken) {
-        ResponseEntity<String> response = restClient.get()
-            .uri(URI.create(kakaoProperties.tokenValidateUrl()))
-            .header("Authorization", "Bearer " + accessToken)
-            .retrieve()
-            .toEntity(String.class);
-        return response.getStatusCode() == HttpStatus.UNAUTHORIZED;
-    }
-
-    @Retryable(backoff = @Backoff(delay = 1000))
     public KakaoTokenResponse refreshAccessToken(String refreshToken) {
         return restClient.post()
             .uri(URI.create(kakaoProperties.tokenUrl()))

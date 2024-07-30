@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 public class OauthToken {
@@ -21,6 +22,8 @@ public class OauthToken {
     private String email;
     @Column(name = "access_token", nullable = false)
     private String accessToken;
+    @Column(name = "expires_in")
+    private LocalDateTime expiresIn;
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
     @ManyToOne
@@ -31,11 +34,12 @@ public class OauthToken {
 
     }
 
-    public OauthToken(String provider, String email, String accessToken, String refreshToken,
+    public OauthToken(String provider, String email, String accessToken, Integer expiresTime, String refreshToken,
         Member member) {
         this.provider = provider;
         this.email = email;
         this.accessToken = accessToken;
+        this.expiresIn = LocalDateTime.now().plusSeconds(expiresTime);
         this.refreshToken = refreshToken;
         this.member = member;
     }
@@ -57,5 +61,9 @@ public class OauthToken {
         if (refreshToken != null) {
             this.refreshToken = refreshToken;
         }
+    }
+
+    public boolean isNotValid() {
+        return expiresIn.isAfter(LocalDateTime.now().minusSeconds(10));
     }
 }
